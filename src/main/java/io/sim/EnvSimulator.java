@@ -3,6 +3,7 @@ package io.sim;
 import java.io.IOException;
 
 import de.tudresden.sumo.objects.SumoColor;
+import io.sim.company.Company;
 import it.polito.appeal.traci.SumoTraciConnection;
 
 public class EnvSimulator extends Thread{
@@ -27,9 +28,11 @@ public class EnvSimulator extends Thread{
 		try {
 			sumo.runServer(12345);
 
-			Itinerary i1 = new Itinerary("data/dados2.xml", "0");
-
+			Itinerary i1 = new Itinerary("data/dados.xml", "0");
+			
 			if (i1.isOn()) {
+				Company company = new Company(i1.getListaRotas());
+				company.start();
 
 				// fuelType: 1-diesel, 2-gasoline, 3-ethanol, 4-hybrid
 				int fuelType = 2;
