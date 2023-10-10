@@ -70,7 +70,7 @@ public class Company extends Thread {
         while (motoristas.get(i).getID().equals(driverID)){
             i++;
         }
-        Rota novaRota = rotas.remove(i);
+        Rota novaRota = rotas.remove(0);
         rotasEmExec.add(novaRota);
         motoristas.get(i).addRouteToExecute(novaRota);
     }

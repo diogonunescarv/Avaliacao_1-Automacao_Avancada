@@ -65,7 +65,7 @@ public class Driver extends Thread {
         }
     }
 
-    public synchronized void createTS(){
+    public void createTS(){
         TransportService tS = new TransportService(true, car.getIdCar(), currentRoute, car, sumo);
         tS.start();
     }
