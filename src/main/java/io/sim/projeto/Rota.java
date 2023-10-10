@@ -1,4 +1,4 @@
-package io.sim.company;
+package io.sim.projeto;
 
 public class Rota {
     private String id;

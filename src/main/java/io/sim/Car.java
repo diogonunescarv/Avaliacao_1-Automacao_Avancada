@@ -1,13 +1,23 @@
 package io.sim;
 
 import de.tudresden.sumo.cmd.Vehicle;
+
 import java.util.ArrayList;
+
+import org.python.modules.synchronize;
 
 import it.polito.appeal.traci.SumoTraciConnection;
 import de.tudresden.sumo.objects.SumoColor;
 import de.tudresden.sumo.objects.SumoPosition2D;
 
-public class Auto extends Thread {
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+
+public class Car extends Vehicle implements Runnable {
 
 	private String idAuto;
 	private SumoColor colorAuto;
@@ -23,14 +33,18 @@ public class Auto extends Thread {
 	private int personNumber;		// the total number of persons which are riding in this vehicle
 
 	private ArrayList<DrivingData> drivingRepport;
-	
-	public Auto(boolean _on_off, String _idAuto, SumoColor _colorAuto, String _driverID, SumoTraciConnection _sumo, long _acquisitionRate,
-			int _fuelType, int _fuelPreferential, double _fuelPrice, int _personCapacity, int _personNumber) throws Exception {
 
+	private Socket socket;
+	private String companyServerHost;
+    private int companyServerPort;
+	
+	public Car(boolean _on_off, String _idAuto, SumoColor _colorAuto, SumoTraciConnection _sumo, long _acquisitionRate,
+			int _fuelType, int _fuelPreferential, double _fuelPrice, int _personCapacity, int _personNumber, String _companyServerHost, int _companyServerPort) throws Exception {
+		
 		this.on_off = _on_off;
 		this.idAuto = _idAuto;
 		this.colorAuto = _colorAuto;
-		this.driverID = _driverID;
+		this.driverID = "";
 		this.sumo = _sumo;
 		this.acquisitionRate = _acquisitionRate;
 		
@@ -50,17 +64,35 @@ public class Auto extends Thread {
 		this.personCapacity = _personCapacity;
 		this.personNumber = _personNumber;
 		this.drivingRepport = new ArrayList<DrivingData>();
+
+		this.companyServerHost = _companyServerHost;
+        this.companyServerPort = _companyServerPort;
 	}
 
 	@Override
 	public void run() {
-		while (this.on_off) {
-			try {
-				//Auto.sleep(this.acquisitionRate);
-				this.atualizaSensores();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		cenectar();
+
+		// while (this.on_off) {
+		// 	try {
+		// 		//Car.sleep(this.acquisitionRate);
+		// 		this.atualizaSensores();
+		// 	} catch (Exception e) {
+		// 		e.printStackTrace();
+		// 	}
+		// }
+	}
+
+	private synchronized void cenectar() {
+		try {
+			socket = new Socket(companyServerHost, companyServerPort);
+			System.out.println(idAuto + " conectou!!");
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -72,10 +104,10 @@ public class Auto extends Thread {
 				SumoPosition2D sumoPosition2D;
 				sumoPosition2D = (SumoPosition2D) sumo.do_job_get(Vehicle.getPosition(this.idAuto));
 
-				System.out.println("AutoID: " + this.getIdAuto());
-				System.out.println("RoadID: " + (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idAuto)));
-				System.out.println("RouteID: " + (String) this.sumo.do_job_get(Vehicle.getRouteID(this.idAuto)));
-				System.out.println("RouteIndex: " + this.sumo.do_job_get(Vehicle.getRouteIndex(this.idAuto)));
+				//System.out.println("AutoID: " + this.getIdAuto());
+				//System.out.println("RoadID: " + (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idAuto)));
+				//System.out.println("RouteID: " + (String) this.sumo.do_job_get(Vehicle.getRouteID(this.idAuto)));
+				//System.out.println("RouteIndex: " + this.sumo.do_job_get(Vehicle.getRouteIndex(this.idAuto)));
 				
 				DrivingData _repport = new DrivingData(
 
@@ -119,20 +151,20 @@ public class Auto extends Thread {
 				this.drivingRepport.add(_repport);
 
 				//System.out.println("Data: " + this.drivingRepport.size());
-				System.out.println("idAuto = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getAutoID());
+				// -->System.out.println("idAuto = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getAutoID());
 				//System.out.println(
 				//		"timestamp = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getTimeStamp());
 				//System.out.println("X=" + this.drivingRepport.get(this.drivingRepport.size() - 1).getX_Position() + ", "
 				//		+ "Y=" + this.drivingRepport.get(this.drivingRepport.size() - 1).getY_Position());
-				System.out.println("speed = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getSpeed());
-				System.out.println("odometer = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getOdometer());
-				System.out.println("Fuel Consumption = "
-						+ this.drivingRepport.get(this.drivingRepport.size() - 1).getFuelConsumption());
+				// -->System.out.println("speed = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getSpeed());
+				// -->System.out.println("odometer = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getOdometer());
+				// -->System.out.println("Fuel Consumption = "
+				// -->		+ this.drivingRepport.get(this.drivingRepport.size() - 1).getFuelConsumption());
 				//System.out.println("Fuel Type = " + this.fuelType);
 				//System.out.println("Fuel Price = " + this.fuelPrice);
 
-				System.out.println(
-						"CO2 Emission = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getCo2Emission());
+				// -->System.out.println(
+				// -->		"CO2 Emission = " + this.drivingRepport.get(this.drivingRepport.size() - 1).getCo2Emission());
 
 				//System.out.println();
 				//System.out.println("************************");
@@ -162,10 +194,10 @@ public class Auto extends Thread {
 				sumo.do_job_set(Vehicle.setSpeed(this.idAuto, 6.95));
 
 				
-				System.out.println("getPersonNumber = " + sumo.do_job_get(Vehicle.getPersonNumber(this.idAuto)));
+				// -->System.out.println("getPersonNumber = " + sumo.do_job_get(Vehicle.getPersonNumber(this.idAuto)));
 				//System.out.println("getPersonIDList = " + sumo.do_job_get(Vehicle.getPersonIDList(this.idAuto)));
 				
-				System.out.println("************************");
+				// -->System.out.println("************************");
 
 			} else {
 				System.out.println("SUMO is closed...");
@@ -191,8 +223,16 @@ public class Auto extends Thread {
 		this.acquisitionRate = _acquisitionRate;
 	}
 
-	public String getIdAuto() {
+	public String getIdCar() {
 		return this.idAuto;
+	}
+
+	public String getDriverID() {
+	 	return driverID;
+	}
+
+	public void setDriverID(String _driverID) {
+		this.driverID = _driverID;
 	}
 
 	public SumoTraciConnection getSumo() {

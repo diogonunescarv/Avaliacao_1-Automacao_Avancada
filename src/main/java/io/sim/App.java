@@ -7,7 +7,7 @@ package io.sim;
 public class App {
     public static void main( String[] args ) {
 
-        EnvSimulator ev = new EnvSimulator();
+        EnvSimulator2 ev = new EnvSimulator2();
         ev.start();
 
     }
