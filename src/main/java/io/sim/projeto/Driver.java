@@ -1,11 +1,15 @@
 package io.sim.projeto;
 
 import io.sim.Car;
+import io.sim.TransportService;
 
+import it.polito.appeal.traci.SumoTraciConnection;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Driver extends Thread {
+    private SumoTraciConnection sumo;
+    
     private String ID;
     private ArrayList<Rota> routesToExecute; // Rotas a serem executadas
     private ArrayList<Rota> executedRoutes;   // Rotas já executadas
@@ -15,7 +19,8 @@ public class Driver extends Thread {
     //private BotPayment botPayment;             // Thread para pagamento à Fuel Station
     private ReentrantLock routesLock;          // Lock para acesso seguro aos ArrayLists de rotas
 
-    public Driver(String _ID, Car car) {
+    public Driver(SumoTraciConnection sumo, String _ID, Car car) {
+        this.sumo = sumo;
         this.ID = _ID;
         this.car = car;
         //this.alphaBankClient = alphaBankClient;
@@ -47,15 +52,22 @@ public class Driver extends Thread {
     }
 
     public void run() {
-        while (!routesToExecute.isEmpty()) {
+        while (true) {
             Rota nextRoute = getNextRouteToExecute();
             if (nextRoute != null) {
                 setCurrentRoute(nextRoute);
                 // Executar a rota atual aqui
                 // Ao final da execução, você pode mover a rota para o ArrayList de rotas executadas.
                 moveRouteToExecuted(currentRoute);
-            }
+
+                createTS();
+            }  
         }
+    }
+
+    public synchronized void createTS(){
+        TransportService tS = new TransportService(true, car.getIdCar(), currentRoute, car, sumo);
+        tS.start();
     }
 
     private Rota getNextRouteToExecute() {

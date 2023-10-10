@@ -10,6 +10,7 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import de.tudresden.sumo.objects.SumoColor;
 import de.tudresden.sumo.objects.SumoPosition2D;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.ServerSocket;
@@ -71,7 +72,16 @@ public class Car extends Vehicle implements Runnable {
 
 	@Override
 	public void run() {
-		cenectar();
+		conectar();
+		
+		try {
+			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+			dos.writeUTF(driverID); //Coloque sua variável string aqui dentro.
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 		// while (this.on_off) {
 		// 	try {
@@ -83,10 +93,10 @@ public class Car extends Vehicle implements Runnable {
 		// }
 	}
 
-	private synchronized void cenectar() {
+	private synchronized void conectar() {
 		try {
 			socket = new Socket(companyServerHost, companyServerPort);
-			System.out.println(idAuto + " conectou!!");
+			System.out.println(idAuto + " solicitou conexão!!");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

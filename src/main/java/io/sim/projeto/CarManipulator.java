@@ -5,12 +5,16 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import io.sim.TransportService;
+
 public class CarManipulator extends Thread {
     private Socket carSocket;
     private DataInputStream input;
     private DataOutputStream output;
+    private Company company;
 
-    public CarManipulator(Socket carSocket) {
+    public CarManipulator(Socket carSocket, Company c) {
+        this.company = c;
         this.carSocket = carSocket;
         try {
             input = new DataInputStream(carSocket.getInputStream());
@@ -22,23 +26,21 @@ public class CarManipulator extends Thread {
 
     @Override
     public void run() {
-        //try {
-            // Realize a comunicação específica do carro aqui
-            // Exemplo: Envie comandos para o carro e leia dados dele
-            while (true) {
-                // Fazendo algo
-            }
-       // } //catch (IOException e) {
-           // e.printStackTrace();
-       // } finally {
-            // Lide com o fechamento da conexão e liberação de recursos
-            // try {
-            //     input.close();
-            //     output.close();
-            //     carSocket.close();
-            // } catch (IOException e) {
-            //     e.printStackTrace();
-            // }
-        //}
+        try {
+            DataInputStream dis = new DataInputStream(carSocket.getInputStream());
+            String driverID = dis.readUTF(); // Lê a tal mensagem
+            company.executarNovaRota(driverID);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        while (true) {
+            
+
+
+            
+        }
+       
     }
 }

@@ -34,7 +34,7 @@ public class CarCreator {
                     126 // Valor de alfa (transparência) fixo em 126
             );
 
-            String idCar = "CAR" + (i + 1);
+            String idCar = "Carro " + (i + 1);
             
             try {
                 // Crie um novo objeto Car com características comuns e cor aleatória

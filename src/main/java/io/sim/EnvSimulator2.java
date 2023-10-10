@@ -36,15 +36,15 @@ public class EnvSimulator2 extends Thread{
 			int qtdCars = 100;
 
 			ArrayList<Car> carList = CarCreator.createCarList(qtdCars, sumo, localHost, portaServidor);
-			ArrayList<Driver> DriverList = DriverCreator.createDrivers(carList);
-			Company company = new Company(23415, "sim/data/dados.xml", sumo, qtdCars);
+			ArrayList<Driver> DriverList = DriverCreator.createDrivers(sumo, carList);
+			Company company = new Company(23415, "data/dados.xml", sumo, qtdCars, DriverList);
 			company.start();
 
 			Thread.sleep(1000);
 
 			for(Car c : carList){
 				Thread t = new Thread(c);
-				Thread.sleep(100);
+				Thread.sleep(200);
 				t.start();
 			}
 

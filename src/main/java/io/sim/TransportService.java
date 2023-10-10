@@ -1,5 +1,7 @@
 package io.sim;
 
+import io.sim.projeto.Rota;
+
 import de.tudresden.sumo.cmd.Route;
 import de.tudresden.sumo.cmd.Vehicle;
 import de.tudresden.sumo.objects.SumoStringList;
@@ -11,14 +13,13 @@ public class TransportService extends Thread {
 	private boolean on_off;
 	private SumoTraciConnection sumo;
 	private Car car;
-	private Itinerary itinerary;
+	private Rota rota;
 
-	public TransportService(boolean _on_off, String _idTransportService, Itinerary _itinerary, Car _car,
-			SumoTraciConnection _sumo) {
+	public TransportService(boolean _on_off, String _idTransportService, Rota _rota, Car _car, SumoTraciConnection _sumo) {
 
 		this.on_off = _on_off;
 		this.idTransportService = _idTransportService;
-		this.itinerary = _itinerary;
+		this.rota = _rota;
 		this.car = _car;
 		this.sumo = _sumo;
 	}
@@ -29,7 +30,7 @@ public class TransportService extends Thread {
 			
 			this.initializeRoutes();
 
-			this.car.start();
+			//this.car.start();
 
 			while (this.on_off) {
 				try {
@@ -52,21 +53,19 @@ public class TransportService extends Thread {
 
 		SumoStringList edge = new SumoStringList();
 		edge.clear();
-		String[] aux = this.itinerary.getItinerary();
+		String aux = this.rota.getEdges();
 
-		for (String e : aux[1].split(" ")) {
+		for (String e : aux.split(" ")) {
 			edge.add(e);
 		}
 
-		System.out.println(edge);
-
 		try {
-			sumo.do_job_set(Route.add(this.itinerary.getIdItinerary(), edge));
+			sumo.do_job_set(Route.add(this.rota.getID(), edge));
 			//sumo.do_job_set(Vehicle.add(this.auto.getIdAuto(), "DEFAULT_VEHTYPE", this.itinerary.getIdItinerary(), 0,
 			//		0.0, 0, (byte) 0));
 			
 			sumo.do_job_set(Vehicle.addFull(this.car.getIdCar(), 				//vehID
-											this.itinerary.getIdItinerary(), 	//routeID 
+											this.rota.getID(), 	//routeID 
 											"DEFAULT_VEHTYPE", 					//typeID 
 											"now", 								//depart  
 											"0", 								//departLane 
@@ -109,7 +108,7 @@ public class TransportService extends Thread {
 		return this.car;
 	}
 
-	public Itinerary getItinerary() {
-		return this.itinerary;
+	public Rota getRota() {
+		return this.rota;
 	}
 }
