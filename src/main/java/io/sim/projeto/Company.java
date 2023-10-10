@@ -60,8 +60,8 @@ public class Company extends Thread {
                 System.out.println("Mobility Company: Carro conectado de " + carSocket.getInetAddress());
 
                 // Crie uma thread para lidar com cada carro
-                //CarManipulator carManipulator = new CarManipulator(carSocket);
-                //carManipulator.start();
+                CarManipulator carManipulator = new CarManipulator(carSocket);
+                carManipulator.start();
             }
             System.out.println("Conectaram todos os carros!!");
         } catch (IOException e) {

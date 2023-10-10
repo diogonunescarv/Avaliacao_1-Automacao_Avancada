@@ -32,13 +32,13 @@ public class CarManipulator extends Thread {
            // e.printStackTrace();
        // } finally {
             // Lide com o fechamento da conexão e liberação de recursos
-            try {
-                input.close();
-                output.close();
-                carSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+            // try {
+            //     input.close();
+            //     output.close();
+            //     carSocket.close();
+            // } catch (IOException e) {
+            //     e.printStackTrace();
+            // }
+        //}
     }
 }

@@ -44,6 +44,7 @@ public class EnvSimulator2 extends Thread{
 
 			for(Car c : carList){
 				Thread t = new Thread(c);
+				Thread.sleep(100);
 				t.start();
 			}
 
