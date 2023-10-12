@@ -2,6 +2,8 @@ package io.sim;
 
 import io.sim.projeto.Rota;
 
+import java.util.ArrayList;
+
 import org.python.modules.synchronize;
 
 import de.tudresden.sumo.cmd.Route;
@@ -32,23 +34,35 @@ public class TransportService extends Thread {
 			
 			this.initializeRoutes();
 
+			Thread.sleep(1000);
+
 			car.setOn_off(true);
 
-			while (this.on_off) {
-				try {
-					this.sumo.do_timestep();
-				} catch (Exception e) {
+			//while (true) {
+				SumoStringList listaCarros;
+				while (this.on_off) {
+					try {
+						this.sumo.do_timestep();
+						listaCarros = (SumoStringList) sumo.do_job_get(Vehicle.getIDList());
+						if (!listaCarros.contains(car.getIdCar())) {
+							System.out.println(car.getIdCar() + ": terminou a rota");
+							car.setOn_off(false);
+							this.on_off = false;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					Thread.sleep(this.car.getAcquisitionRate());
+					if (this.getSumo().isClosed()) {
+						this.on_off = false;
+						System.out.println("SUMO is closed...");
+					}
 				}
-				Thread.sleep(this.car.getAcquisitionRate());
-				if (this.getSumo().isClosed()) {
-					this.on_off = false;
-					System.out.println("SUMO is closed...");
-				}
-			}
-
+			//}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+			
 	}
 
 	public synchronized void initializeRoutes() {
@@ -88,6 +102,10 @@ public class TransportService extends Thread {
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
+	}
+
+	public void setNewRoute(Rota novaRota) {
+		this.rota = novaRota;
 	}
 
 	public boolean isOn_off() {

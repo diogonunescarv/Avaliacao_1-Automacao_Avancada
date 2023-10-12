@@ -10,6 +10,7 @@ import it.polito.appeal.traci.SumoTraciConnection;
 import de.tudresden.sumo.objects.SumoColor;
 import de.tudresden.sumo.objects.SumoPosition2D;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -38,6 +39,8 @@ public class Car extends Vehicle implements Runnable {
 	private Socket socket;
 	private String companyServerHost;
     private int companyServerPort;
+	private DataInputStream input;
+    private DataOutputStream output;
 	
 	public Car(boolean _on_off, String _carID, SumoColor _colorAuto, SumoTraciConnection _sumo, long _acquisitionRate,
 			int _fuelType, int _fuelPreferential, double _fuelPrice, int _personCapacity, int _personNumber, String _companyServerHost, int _companyServerPort) throws Exception {
@@ -76,16 +79,6 @@ public class Car extends Vehicle implements Runnable {
 
 	@Override
 	public void run() {
-		conectar();
-		
-		try {
-			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-			dos.writeUTF(driverID); //Coloque sua variável string aqui dentro.
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		while(true) {
 			while (this.on_off) {
 				try {
@@ -95,20 +88,42 @@ public class Car extends Vehicle implements Runnable {
 					e.printStackTrace();
 				}
 			}
-		}
+		} 
 	}
 
-	private synchronized void conectar() {
+	public synchronized void conectar() {
 		try {
 			socket = new Socket(companyServerHost, companyServerPort);
 			System.out.println(carID + " solicitou conexão!!");
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            input = new DataInputStream(socket.getInputStream());
+            output = new DataOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void solicitarRota() {
+		try {
+			output.writeUTF("manda mais uma rota");
+		} catch (IOException e) {
+			//TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public boolean mandaID() {
+		try {
+			output.writeUTF(driverID); //Coloque sua variável string aqui dentro.
+			if (input.readUTF().equals("Recebi o ID")) {
+				return true;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Deu caca");
+		return false;
 	}
 
 	private void atualizaSensores() {

@@ -27,9 +27,18 @@ public class CarManipulator extends Thread {
     @Override
     public void run() {
         try {
-            DataInputStream dis = new DataInputStream(carSocket.getInputStream());
-            String driverID = dis.readUTF();
+            String driverID = input.readUTF();
             company.executarNovaRota(driverID);
+            output.writeUTF("Recebi o ID");
+
+            while (true) {
+                if (input.readUTF().equals("manda mais uma rota")) {
+                    System.out.println("Tentou mudar a rota!!");
+                    company.terminaRota(driverID);
+                    company.executarNovaRota(driverID);
+                }
+            }
+            
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

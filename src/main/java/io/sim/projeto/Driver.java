@@ -30,6 +30,18 @@ public class Driver extends Thread {
         this.routesLock = new ReentrantLock();
     }
 
+    private void startarCarro(){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        Thread t = new Thread(car);
+		t.start();
+    }
+
     public String getID() {
         return ID;
     }
@@ -52,26 +64,51 @@ public class Driver extends Thread {
     }
 
     public void run() {
-        while (true) {
-            Rota nextRoute = getNextRouteToExecute();
-            if (nextRoute != null) {
-                setCurrentRoute(nextRoute);
-                // Executar a rota atual aqui
-                // Ao final da execução, você pode mover a rota para o ArrayList de rotas executadas.
-                moveRouteToExecuted(currentRoute);
-                
-                synchronized (Driver.class) {
-                    TransportService tS = new TransportService(true, car.getIdCar(), currentRoute, car, sumo);
-                    tS.start();
+        startarCarro();
+        conectarCarro();
+
+        if (mandarID()) {
+            while (true) {
+                Rota nextRoute = getNextRouteToExecute();
+                if (nextRoute != null) {
+                    setCurrentRoute(nextRoute);
+                    // Executar a rota atual aqui
+                    // Ao final da execução, você pode mover a rota para o ArrayList de rotas executadas.
+                    moveRouteToExecuted(currentRoute);
+                    
+                    synchronized (Driver.class) {
+                        TransportService tS = new TransportService(true, car.getIdCar(), currentRoute, car, sumo);
+                        tS.start();
+                    }
+
+                    // try {
+                    //     Thread.sleep(5000);
+                    // } catch (InterruptedException e) {
+                    //     // TODO Auto-generated catch block
+                    //     e.printStackTrace();
+                    // }
+                    
                 }
-                
-            }  
+
+                // if (!car.isOn_off()) {
+                //     pedirRota();
+                // }
+            }
         }
+        
     }
 
-    //public synchronized void createTS(){
-        
-    //}
+    private void conectarCarro() {
+        car.conectar();
+    }
+
+    private void pedirRota() {
+        car.solicitarRota();
+    }
+    
+    private boolean mandarID() {
+        return car.mandaID();
+    }
 
     private Rota getNextRouteToExecute() {
         routesLock.lock();

@@ -73,4 +73,18 @@ public class Company extends Thread {
         rotasEmExec.add(novaRota);
         motoristas.get(i).addRouteToExecute(novaRota);
     }
+
+    public synchronized void terminaRota(String driverID) {
+        int i = 0;
+        while (!motoristas.get(i).getID().equals(driverID)){
+            i++;
+        }
+        String idRota = motoristas.get(i).getCurrentRoute().getID();
+
+        i = 0;
+        while (!rotasEmExec.get(i).getID().equals(idRota)) {
+            i++;
+        }
+        rotasConc.add(rotasEmExec.remove(i));
+    }
 }

@@ -1,21 +1,18 @@
 package io.sim;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import java.io.IOException;
-
 import de.tudresden.sumo.objects.SumoColor;
-import io.sim.projeto.Company;
 import io.sim.projeto.Driver;
-import io.sim.projeto.RouteExtractor;
 import io.sim.projeto.Rota;
+import io.sim.projeto.RouteExtractor;
 import it.polito.appeal.traci.SumoTraciConnection;
 
-public class EnvSimulator2 extends Thread{
-
+public class EnvSimulator3 {
     private SumoTraciConnection sumo;
 
-    public EnvSimulator2(){
+    public EnvSimulator3(){
 
     }
 
@@ -65,5 +62,4 @@ public class EnvSimulator2 extends Thread{
 		}
 
     }
-
 }
