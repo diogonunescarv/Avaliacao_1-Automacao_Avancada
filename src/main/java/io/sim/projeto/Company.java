@@ -47,7 +47,7 @@ public class Company extends Thread {
     public void run() {
         int contador = 0;
         try {
-            while (contador < 100) {
+            while (contador < qtdCars) {
                 // Aceita conexões de carros como um servidor
                 Socket carSocket = carServerSocket.accept();
                 contador++;

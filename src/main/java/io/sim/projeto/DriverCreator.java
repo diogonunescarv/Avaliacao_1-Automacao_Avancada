@@ -9,8 +9,8 @@ public class DriverCreator {
     public static ArrayList<Driver> createDrivers(SumoTraciConnection sumo, ArrayList<Car> cars) {
         ArrayList<Driver> drivers = new ArrayList<>();
 
-        for (int i = 1; i < cars.size(); i++) {
-            String driverID = "Driver" + i;
+        for (int i = 0; i < cars.size(); i++) {
+            String driverID = "Driver " + (i + 1);
             Car car = cars.get(i);
             car.setDriverID(driverID);
 
