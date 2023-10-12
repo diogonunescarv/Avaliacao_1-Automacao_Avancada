@@ -59,16 +59,19 @@ public class Driver extends Thread {
                 // Executar a rota atual aqui
                 // Ao final da execução, você pode mover a rota para o ArrayList de rotas executadas.
                 moveRouteToExecuted(currentRoute);
-
-                createTS();
+                
+                synchronized (Driver.class) {
+                    TransportService tS = new TransportService(true, car.getIdCar(), currentRoute, car, sumo);
+                    tS.start();
+                }
+                
             }  
         }
     }
 
-    public void createTS(){
-        TransportService tS = new TransportService(true, car.getIdCar(), currentRoute, car, sumo);
-        tS.start();
-    }
+    //public synchronized void createTS(){
+        
+    //}
 
     private Rota getNextRouteToExecute() {
         routesLock.lock();

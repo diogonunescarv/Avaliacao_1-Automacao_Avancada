@@ -2,6 +2,8 @@ package io.sim;
 
 import io.sim.projeto.Rota;
 
+import org.python.modules.synchronize;
+
 import de.tudresden.sumo.cmd.Route;
 import de.tudresden.sumo.cmd.Vehicle;
 import de.tudresden.sumo.objects.SumoStringList;
@@ -30,7 +32,7 @@ public class TransportService extends Thread {
 			
 			this.initializeRoutes();
 
-			//this.car.start();
+			car.setOn_off(true);
 
 			while (this.on_off) {
 				try {
@@ -49,7 +51,7 @@ public class TransportService extends Thread {
 		}
 	}
 
-	public void initializeRoutes() {
+	public synchronized void initializeRoutes() {
 
 		SumoStringList edge = new SumoStringList();
 		edge.clear();
@@ -63,9 +65,9 @@ public class TransportService extends Thread {
 			sumo.do_job_set(Route.add(this.rota.getID(), edge));
 			//sumo.do_job_set(Vehicle.add(this.auto.getIdAuto(), "DEFAULT_VEHTYPE", this.itinerary.getIdItinerary(), 0,
 			//		0.0, 0, (byte) 0));
-			
+
 			sumo.do_job_set(Vehicle.addFull(this.car.getIdCar(), 				//vehID
-											this.rota.getID(), 	//routeID 
+											this.rota.getID(), 	                //routeID 
 											"DEFAULT_VEHTYPE", 					//typeID 
 											"now", 								//depart  
 											"0", 								//departLane 

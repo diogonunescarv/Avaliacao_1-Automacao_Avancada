@@ -20,7 +20,7 @@ import java.util.ArrayList;
 
 public class Car extends Vehicle implements Runnable {
 
-	private String idAuto;
+	private String carID;
 	private SumoColor colorAuto;
 	private String driverID;
 	private SumoTraciConnection sumo;
@@ -39,11 +39,11 @@ public class Car extends Vehicle implements Runnable {
 	private String companyServerHost;
     private int companyServerPort;
 	
-	public Car(boolean _on_off, String _idAuto, SumoColor _colorAuto, SumoTraciConnection _sumo, long _acquisitionRate,
+	public Car(boolean _on_off, String _carID, SumoColor _colorAuto, SumoTraciConnection _sumo, long _acquisitionRate,
 			int _fuelType, int _fuelPreferential, double _fuelPrice, int _personCapacity, int _personNumber, String _companyServerHost, int _companyServerPort) throws Exception {
 		
 		this.on_off = _on_off;
-		this.idAuto = _idAuto;
+		this.carID = _carID;
 		this.colorAuto = _colorAuto;
 		this.driverID = "";
 		this.sumo = _sumo;
@@ -70,6 +70,10 @@ public class Car extends Vehicle implements Runnable {
         this.companyServerPort = _companyServerPort;
 	}
 
+	public Car(boolean b, String string, SumoColor green, String string2, SumoTraciConnection sumo2, int i,
+			int fuelType2, int fuelPreferential2, double fuelPrice2, int personCapacity2, int personNumber2) {
+	}
+
 	@Override
 	public void run() {
 		conectar();
@@ -82,21 +86,22 @@ public class Car extends Vehicle implements Runnable {
 			e.printStackTrace();
 		}
 		
-
-		// while (this.on_off) {
-		// 	try {
-		// 		//Car.sleep(this.acquisitionRate);
-		// 		this.atualizaSensores();
-		// 	} catch (Exception e) {
-		// 		e.printStackTrace();
-		// 	}
-		// }
+		while(true) {
+			while (this.on_off) {
+				try {
+					//Car.sleep(this.acquisitionRate);
+					this.atualizaSensores();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private synchronized void conectar() {
 		try {
 			socket = new Socket(companyServerHost, companyServerPort);
-			System.out.println(idAuto + " solicitou conexão!!");
+			System.out.println(carID + " solicitou conexão!!");
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -112,7 +117,7 @@ public class Car extends Vehicle implements Runnable {
 
 			if (!this.getSumo().isClosed()) {
 				SumoPosition2D sumoPosition2D;
-				sumoPosition2D = (SumoPosition2D) sumo.do_job_get(Vehicle.getPosition(this.idAuto));
+				sumoPosition2D = (SumoPosition2D) sumo.do_job_get(Vehicle.getPosition(this.carID));
 
 				//System.out.println("AutoID: " + this.getIdAuto());
 				//System.out.println("RoadID: " + (String) this.sumo.do_job_get(Vehicle.getRoadID(this.idAuto)));
@@ -121,13 +126,13 @@ public class Car extends Vehicle implements Runnable {
 				
 				DrivingData _repport = new DrivingData(
 
-						this.idAuto, this.driverID, System.currentTimeMillis(), sumoPosition2D.x, sumoPosition2D.y,
-						(String) this.sumo.do_job_get(Vehicle.getRoadID(this.idAuto)),
-						(String) this.sumo.do_job_get(Vehicle.getRouteID(this.idAuto)),
-						(double) sumo.do_job_get(Vehicle.getSpeed(this.idAuto)),
-						(double) sumo.do_job_get(Vehicle.getDistance(this.idAuto)),
+						this.carID, this.driverID, System.currentTimeMillis(), sumoPosition2D.x, sumoPosition2D.y,
+						(String) this.sumo.do_job_get(Vehicle.getRoadID(this.carID)),
+						(String) this.sumo.do_job_get(Vehicle.getRouteID(this.carID)),
+						(double) sumo.do_job_get(Vehicle.getSpeed(this.carID)),
+						(double) sumo.do_job_get(Vehicle.getDistance(this.carID)),
 
-						(double) sumo.do_job_get(Vehicle.getFuelConsumption(this.idAuto)),
+						(double) sumo.do_job_get(Vehicle.getFuelConsumption(this.carID)),
 						// Vehicle's fuel consumption in ml/s during this time step,
 						// to get the value for one step multiply with the step length; error value:
 						// -2^30
@@ -136,12 +141,12 @@ public class Car extends Vehicle implements Runnable {
 
 						this.fuelType, this.fuelPrice,
 
-						(double) sumo.do_job_get(Vehicle.getCO2Emission(this.idAuto)),
+						(double) sumo.do_job_get(Vehicle.getCO2Emission(this.carID)),
 						// Vehicle's CO2 emissions in mg/s during this time step,
 						// to get the value for one step multiply with the step length; error value:
 						// -2^30
 
-						(double) sumo.do_job_get(Vehicle.getHCEmission(this.idAuto)),
+						(double) sumo.do_job_get(Vehicle.getHCEmission(this.carID)),
 						// Vehicle's HC emissions in mg/s during this time step,
 						// to get the value for one step multiply with the step length; error value:
 						// -2^30
@@ -200,8 +205,8 @@ public class Car extends Vehicle implements Runnable {
 				//		"getSpeedDeviation = " + (double) sumo.do_job_get(Vehicle.getSpeedDeviation(this.idAuto)));
 				
 				
-				sumo.do_job_set(Vehicle.setSpeedMode(this.idAuto, 0));
-				sumo.do_job_set(Vehicle.setSpeed(this.idAuto, 6.95));
+				sumo.do_job_set(Vehicle.setSpeedMode(this.carID, 0));
+				sumo.do_job_set(Vehicle.setSpeed(this.carID, 6.95));
 
 				
 				// -->System.out.println("getPersonNumber = " + sumo.do_job_get(Vehicle.getPersonNumber(this.idAuto)));
@@ -234,7 +239,7 @@ public class Car extends Vehicle implements Runnable {
 	}
 
 	public String getIdCar() {
-		return this.idAuto;
+		return this.carID;
 	}
 
 	public String getDriverID() {

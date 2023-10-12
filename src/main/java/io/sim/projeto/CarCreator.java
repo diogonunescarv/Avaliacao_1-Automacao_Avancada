@@ -15,7 +15,7 @@ public class CarCreator {
         ArrayList<Car> carList = new ArrayList<Car>();
 
         // Defina as características comuns para os novos objetos Auto
-        boolean on_off = true;
+        boolean on_off = false;
         long acquisitionRate = 500;
         int fuelType = 2; // Gasolina
         int fuelPreferential = 2; // Gasolina

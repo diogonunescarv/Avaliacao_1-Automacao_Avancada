@@ -28,18 +28,11 @@ public class CarManipulator extends Thread {
     public void run() {
         try {
             DataInputStream dis = new DataInputStream(carSocket.getInputStream());
-            String driverID = dis.readUTF(); // Lê a tal mensagem
+            String driverID = dis.readUTF();
             company.executarNovaRota(driverID);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-        
-        while (true) {
-            
-
-
-            
         }
        
     }

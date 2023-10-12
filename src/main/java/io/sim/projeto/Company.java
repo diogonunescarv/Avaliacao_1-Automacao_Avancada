@@ -45,7 +45,6 @@ public class Company extends Thread {
 
     @Override
     public void run() {
-        System.out.println("Quantidade de Rotas no ArrayList de Rotas: " + rotas.size());
         int contador = 0;
         try {
             while (contador < 100) {
@@ -67,7 +66,7 @@ public class Company extends Thread {
 
     public synchronized void executarNovaRota(String driverID){
         int i = 0;
-        while (motoristas.get(i).getID().equals(driverID)){
+        while (!motoristas.get(i).getID().equals(driverID)){
             i++;
         }
         Rota novaRota = rotas.remove(0);

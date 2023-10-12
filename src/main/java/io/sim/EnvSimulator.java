@@ -1,9 +1,14 @@
 package io.sim;
 
+import java.util.ArrayList;
+
 import java.io.IOException;
 
 import de.tudresden.sumo.objects.SumoColor;
 import io.sim.projeto.Company;
+import io.sim.projeto.Driver;
+import io.sim.projeto.RouteExtractor;
+import io.sim.projeto.Rota;
 import it.polito.appeal.traci.SumoTraciConnection;
 
 public class EnvSimulator extends Thread{
@@ -23,14 +28,14 @@ public class EnvSimulator extends Thread{
 		// Sumo connection
 		this.sumo = new SumoTraciConnection(sumo_bin, config_file);
 		sumo.addOption("start", "1"); // auto-run on GUI show
-		sumo.addOption("quit-on-end", "1"); // auto-close on end
+		//sumo.addOption("quit-on-end", "1"); // auto-close on end
 
 		try {
 			sumo.runServer(12345);
 
-			Itinerary i1 = new Itinerary("data/dados2.xml", "0");
-			
-			if (i1.isOn()) {
+			ArrayList<Rota> rotas = RouteExtractor.createRoutesFromXML("data/dados2.xml");
+			System.out.println(rotas.size());
+			//if (i1.isOn()) {
 				// fuelType: 1-diesel, 2-gasoline, 3-ethanol, 4-hybrid
 				int fuelType = 2;
 			 	int fuelPreferential = 2;
@@ -39,14 +44,16 @@ public class EnvSimulator extends Thread{
 			 	int personNumber = 1;
 			 	SumoColor green = new SumoColor(0, 255, 0, 126);
 			 	Car c1 = new Car(true, "CAR1", green,"D1", sumo, 500, fuelType, fuelPreferential, fuelPrice, personCapacity, personNumber);
-			 	TransportService tS1 = new TransportService(true, "CAR1", i1, c1, sumo);
+			 	Driver d1 = new Driver(sumo, "D1", c1);
+				TransportService tS1 = new TransportService(true, "CAR1", rotas.remove(0), c1, sumo);
 
 			 	tS1.initializeRoutes();
 
 				tS1.start();
                 Thread.sleep(5000);
-				c1.start();
-			}
+				Thread t = new Thread(c1);
+				t.start();
+			//}
 
 		
 		} catch (IOException e1) {
