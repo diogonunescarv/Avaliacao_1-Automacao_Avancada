@@ -33,6 +33,7 @@ public class Car extends Vehicle implements Runnable {
 	private double fuelPrice; 		// price in liters
 	private int personCapacity;		// the total number of persons that can ride in this vehicle
 	private int personNumber;		// the total number of persons which are riding in this vehicle
+	private double fuelTank;
 
 	private ArrayList<DrivingData> drivingRepport;
 
@@ -64,6 +65,7 @@ public class Car extends Vehicle implements Runnable {
 			this.fuelPreferential = _fuelPreferential;
 		}
 
+		this.fuelTank = 10;
 		this.fuelPrice = _fuelPrice;
 		this.personCapacity = _personCapacity;
 		this.personNumber = _personNumber;
@@ -311,5 +313,49 @@ public class Car extends Vehicle implements Runnable {
 
 	public int getPersonNumber() {
 		return this.personNumber;
+	}
+
+	public double getFuelLevel(){
+		return this.fuelTank;
+	}
+
+	public double setFuelLevel(double fuelLevel){
+		return this.fuelTank = fuelLevel;
+	}
+
+	public void setFullFuelLevel(){
+		double NeedQtd = 10 - getFuelLevel();
+
+		System.out.println(carID + " Abasteceu(L): " + NeedQtd);
+		//System.out.println(carID + " gastou: " + payment(NeedQtd));
+		
+		this.fuelTank = 10;	
+	}
+
+	public double payment(double NeedQtd){
+		return (this.fuelPrice*NeedQtd);
+	}
+
+	public void setFuelSpend() throws Exception{
+		//double spend = (double) sumo.do_job_get(Vehicle.getFuelConsumption(this.carID));
+		if ((double) sumo.do_job_get(Vehicle.getSpeed(this.carID)) != 0){
+			double spend = 0.1;
+			double aux = (getFuelLevel()  - spend);
+			setFuelLevel(aux);
+		}
+	}
+
+	public void abastecendo() throws Exception{
+		sumo.do_job_set(Vehicle.setSpeed(this.carID, 0));
+	}
+
+	public void fillFuelTank() throws Exception {
+		setFullFuelLevel();
+		sumo.do_job_set(Vehicle.setSpeed(this.carID, 6.95));
+	}
+
+	public void getFuelConsumption() throws Exception {
+		double spend = (double) sumo.do_job_get(Vehicle.getFuelConsumption(this.carID));
+		System.out.println(spend);
 	}
 }

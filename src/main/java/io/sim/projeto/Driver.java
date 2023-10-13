@@ -10,6 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Driver extends Thread {
     private SumoTraciConnection sumo;
     
+
     private String ID;
     private ArrayList<Rota> routesToExecute; // Rotas a serem executadas
     private ArrayList<Rota> executedRoutes;   // Rotas já executadas
@@ -18,8 +19,9 @@ public class Driver extends Thread {
     //private AlphaBankClient alphaBankClient;   // Cliente para interagir com o AlphaBank
     //private BotPayment botPayment;             // Thread para pagamento à Fuel Station
     private ReentrantLock routesLock;          // Lock para acesso seguro aos ArrayLists de rotas
+    private FuelStation fs;
 
-    public Driver(SumoTraciConnection sumo, String _ID, Car car) {
+    public Driver(SumoTraciConnection sumo, String _ID, Car car, FuelStation fs) {
         this.sumo = sumo;
         this.ID = _ID;
         this.car = car;
@@ -28,6 +30,7 @@ public class Driver extends Thread {
         this.executedRoutes = new ArrayList<>();
         //this.botPayment = new BotPayment(car, alphaBankClient);
         this.routesLock = new ReentrantLock();
+        this.fs = fs;
     }
 
     private void startarCarro(){
@@ -81,6 +84,7 @@ public class Driver extends Thread {
                         tS.start();
                     }
 
+
                     // try {
                     //     Thread.sleep(5000);
                     // } catch (InterruptedException e) {
@@ -89,6 +93,15 @@ public class Driver extends Thread {
                     // }
                     
                 }
+
+                if (car.getFuelLevel() <= 8.5){
+                        try {
+                            fs.refuelCar(car);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+					}
 
                 // if (!car.isOn_off()) {
                 //     pedirRota();

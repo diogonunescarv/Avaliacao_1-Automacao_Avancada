@@ -41,8 +41,14 @@ public class TransportService extends Thread {
 			//while (true) {
 				SumoStringList listaCarros;
 				while (this.on_off) {
+					
+					car.setFuelSpend();
+					
+					//System.out.println(car.getFuelLevel());
+					//car.getFuelConsumption();
+					
 					try {
-						this.sumo.do_timestep();
+						//this.sumo.do_timestep();
 						listaCarros = (SumoStringList) sumo.do_job_get(Vehicle.getIDList());
 						if (!listaCarros.contains(car.getIdCar())) {
 							System.out.println(car.getIdCar() + ": terminou a rota");
@@ -52,7 +58,9 @@ public class TransportService extends Thread {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+					
 					Thread.sleep(this.car.getAcquisitionRate());
+					
 					if (this.getSumo().isClosed()) {
 						this.on_off = false;
 						System.out.println("SUMO is closed...");
